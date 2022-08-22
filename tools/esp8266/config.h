@@ -29,7 +29,7 @@
 #define WIFI_AP_ACTIVE_TIME     60
 
 // default device name
-#define DEF_DEVICE_NAME         "AHOY-DTU"
+#define DEF_DEVICE_NAME         "TOMS-DTU"
 
 // default pinout
 #define DEF_RF24_CS_PIN         15
@@ -43,7 +43,7 @@
 #define PACKET_BUFFER_SIZE      30
 
 // number of configurable inverters
-#define MAX_NUM_INVERTERS       3
+#define MAX_NUM_INVERTERS       1
 
 // default serial interval
 #define SERIAL_INTERVAL         5
