@@ -6,21 +6,30 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-// fallback WiFi info
+
+//-------------------------------------
+// WIFI CONFIGURATION
+//-------------------------------------
+
+// Fallback WiFi Info
 #define FB_WIFI_SSID    "YOUR_WIFI_SSID"
 #define FB_WIFI_PWD     "YOUR_WIFI_PWD"
 
 
-// access point info
+// Access Point Info
+// In case there is no WiFi Network or Ahoy can not connect to it, it will act as an Access Point
+
 #define WIFI_AP_SSID    "AHOY-DTU"
 #define WIFI_AP_PWD     "esp_8266"
-// stay in access point mode all the time
+
+// If the next line is uncommented, Ahoy will stay in access point mode all the time
 //#define AP_ONLY
 
 
 //-------------------------------------
 // CONFIGURATION - COMPILE TIME
 //-------------------------------------
+
 // time in seconds how long the station info (ssid + pwd) will be tried
 #define WIFI_TRY_CONNECT_TIME   30
 
@@ -31,10 +40,13 @@
 // default device name
 #define DEF_DEVICE_NAME         "TOMS-DTU"
 
-// default pinout
+// default pinout (GPIO Number)
 #define DEF_RF24_CS_PIN         15
 #define DEF_RF24_CE_PIN         2
 #define DEF_RF24_IRQ_PIN        0
+
+// default radio ID
+#define DTU_RADIO_ID            ((uint64_t)0x1234567801ULL)
 
 // default NRF24 power, possible values (0 - 3)
 #define DEF_AMPLIFIERPOWER      2
@@ -69,11 +81,14 @@
 // threshold of minimum power on which the inverter is marked as inactive
 #define INACT_PWR_THRESH        3
 
-// default ntp server uri
+// default NTP server uri
 #define DEF_NTP_SERVER_NAME     "pool.ntp.org"
 
-// default ntp server port
-#define DEF_NTP_PORT            8888
+// default NTP server port
+#define DEF_NTP_PORT            123
+
+// NTP refresh interval in ms (default 12h)
+#define NTP_REFRESH_INTERVAL    12 * 3600 * 1000
 
 // default mqtt interval
 #define MQTT_INTERVAL           60
@@ -95,5 +110,9 @@
 
 // changes the style of "/setup" page, visualized = nicer
 #define LIVEDATA_VISUALIZED
+
+#if __has_include("config_override.h")
+    #include "config_override.h"
+#endif
 
 #endif /*__CONFIG_H__*/

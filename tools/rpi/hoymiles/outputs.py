@@ -208,13 +208,10 @@ try:
 except ModuleNotFoundError:
     pass
 
-class VolkszaehlerOutputPlugin(OutputPluginFactory):
-    def __init__(self, config, **params):
-        """
-        Initialize VolkszaehlerOutputPlugin
-        """
-        super().__init__(**params)
-
+class VzInverterOutput:
+    def __init__(self, config, session):
+        self.session = session
+        self.serial = config.get('serial')
         self.baseurl = config.get('url', 'http://localhost/middleware/')
         self.channels = dict()
         for channel in config.get('channels', []):
@@ -223,7 +220,7 @@ class VolkszaehlerOutputPlugin(OutputPluginFactory):
             if uid and ctype:
                 self.channels[ctype] = uid
 
-    def store_status(self, response, **params):
+    def store_status(self, data, session):
         """
         Publish StatusResponse object
 
@@ -231,14 +228,8 @@ class VolkszaehlerOutputPlugin(OutputPluginFactory):
 
         :raises ValueError: when response is not instance of StatusResponse
         """
-
-        if not isinstance(response, StatusResponse):
-            raise ValueError('Data needs to be instance of StatusResponse')
-
         if len(self.channels) == 0:
             return
-
-        data = response.__dict__()
 
         ts = int(round(data['time'].timestamp() * 1000))
 
@@ -271,8 +262,45 @@ class VolkszaehlerOutputPlugin(OutputPluginFactory):
         uid = self.channels[ctype]
         url = f'{self.baseurl}/data/{uid}.json?operation=add&ts={ts}&value={value}'
         try:
-            r = requests.get(url)
+            r = self.session.get(url)
             if r.status_code != 200:
                 raise ValueError('Could not send request (%s)' % url)
-        except ConnectionError as e:
+        except requests.exceptions.ConnectionError as e:
             raise ValueError('Could not send request (%s)' % e)
+
+class VolkszaehlerOutputPlugin(OutputPluginFactory):
+    def __init__(self, config, **params):
+        """
+        Initialize VolkszaehlerOutputPlugin
+        """
+        super().__init__(**params)
+
+        self.session = requests.Session()
+        self.inverters = dict()
+        for inverterconfig in config.get('inverters', []):
+            serial = inverterconfig.get('serial')
+            output = VzInverterOutput(inverterconfig, self.session)
+            self.inverters[serial] = output
+
+    def store_status(self, response, **params):
+        """
+        Publish StatusResponse object
+
+        :param hoymiles.decoders.StatusResponse response: StatusResponse object
+
+        :raises ValueError: when response is not instance of StatusResponse
+        """
+        if not isinstance(response, StatusResponse):
+            raise ValueError('Data needs to be instance of StatusResponse')
+
+        if len(self.inverters) == 0:
+            return
+
+        data = response.__dict__()
+        serial = data["inverter_ser"]
+        if serial in self.inverters:
+            output = self.inverters[serial]
+            try:
+                output.store_status(data, self.session)
+            except ValueError as e:
+                print('Could not send data to volkszaehler instance: %s' % e)

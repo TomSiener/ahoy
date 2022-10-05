@@ -1,17 +1,35 @@
+![actions/workflows/compile_esp8266.yml](../../actions/workflows/compile_esp8266.yml/badge.svg) ![actions/workflows/compile_development.yml](../../actions/workflows/compile_development.yml/badge.svg)
+
+# 🖐 Ahoy!
 ![Logo](https://github.com/grindylow/ahoy/blob/main/doc/logo1_small.png?raw=true)
 
-# ahoy
-Various tools, examples, and documentation for communicating with Hoymiles microinverters.
+**Communicate with Hoymiles inverters via radio**. Get actual values like power, current, daily energy and set parameters like the power limit via web interface or MQTT. In this repository you will find different approaches means Hardware / Software to realize the described functionalities.
 
-In particular:
+List of approaches
 
-* `doc/hoymiles-format-description.txt` is a [detailed description of the communications format](doc/hoymiles-format-description.md) and the history of this project
-* `doc/getting-started-ESP8266.md` shows the [hardware setup for an ESP8266-based system](doc/getting-started-ESP8266.md)
-* The `tools` folder contains various software tools for RaspberryPi, Arduino and ESP8266/ESP32:
-  * A [version for ESP8266](tools/esp8266/) that includes an web interface ![](../../actions/workflows/compile_esp8266.yml/badge.svg)
-  * A [version for Arduino Nano](tools/nano/NRF24_SendRcv/)
-  * An [alternative Version of the above](tools/NRF24_SendRcv/)
-  * A [different implementation](tools/HoyDtuSim/)
-  * An [implementation for Raspberry Pi](tools/rpi/) that polls an inverter and archives results as log files/stdout as well as posting them to an MQTT broker.
+- [ESP8266/ESP32, C++](tools/esp8266/) 👈 the most effort is spent here
+- [Arduino Nano, C++](tools/nano/NRF24_SendRcv/)
+- [Raspberry Pi, Python](tools/rpi/)
+- [Others, C/C++](tools/nano/NRF24_SendRcv/)
 
-Contributors are always welcome!
+## Quick Start with ESP8266
+- [Go here ✨](tools/esp8266/README.md#things-needed)
+
+
+## Success Stories
+- [Getting the data into influxDB and visualize them in a Grafana Dashboard](https://grafana.com/grafana/dashboards/16850-pv-power-ahoy/) (thx @Carl)
+
+## Support, Feedback, Information and Discussion
+- [Discord Server (~ 300 Users)](https://discord.gg/WzhxEY62mB)
+- [The root of development](https://www.mikrocontroller.net/topic/525778)
+
+### Development
+If you encounter issues use the issues here on github.
+
+Please try to describe your issues as precise as possible and think about if this is a issue with the software here in the repository or other software components.
+
+**Contributors are always welcome!**
+
+### Related Projects
+- [OpenDTU](https://github.com/tbnobody/OpenDTU)
+- [DTU Simulator](https://github.com/Ziyatoe/DTUsimMI1x00-Hoymiles)
