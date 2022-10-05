@@ -49,7 +49,7 @@
 #define DTU_RADIO_ID            ((uint64_t)0x1234567801ULL)
 
 // default NRF24 power, possible values (0 - 3)
-#define DEF_AMPLIFIERPOWER      2
+#define DEF_AMPLIFIERPOWER      1
 
 // number of packets hold in buffer
 #define PACKET_BUFFER_SIZE      30
@@ -61,7 +61,7 @@
 #define SERIAL_INTERVAL         5
 
 // default send interval
-#define SEND_INTERVAL           30
+#define SEND_INTERVAL           60
 
 // maximum human readable inverter name length
 #define MAX_NAME_LENGTH         16
@@ -73,7 +73,7 @@
 #define MAX_PAYLOAD_ENTRIES     10
 
 // maximum requests for retransmits per payload (per inverter)
-#define DEF_MAX_RETRANS_PER_PYLD 5
+#define DEF_MAX_RETRANS_PER_PYLD 1
 
 // number of seconds since last successful response, before inverter is marked inactive
 #define INACT_THRES_SEC         300
