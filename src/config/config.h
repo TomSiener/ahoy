@@ -40,7 +40,7 @@
 #define WIFI_AP_ACTIVE_TIME     60
 
 // default device name
-#define DEF_DEVICE_NAME         "AHOY-DTU"
+#define DEF_DEVICE_NAME         "TOMS-DTU"
 
 // default pinout (GPIO Number)
 #if defined(ESP32)
@@ -68,7 +68,7 @@
 #define SERIAL_INTERVAL         5
 
 // default send interval
-#define SEND_INTERVAL           30
+#define SEND_INTERVAL           60
 
 // maximum human readable inverter name length
 #define MAX_NAME_LENGTH         16
@@ -80,7 +80,7 @@
 #define MAX_PAYLOAD_ENTRIES     10
 
 // maximum requests for retransmits per payload (per inverter)
-#define DEF_MAX_RETRANS_PER_PYLD 5
+#define DEF_MAX_RETRANS_PER_PYLD 1
 
 // number of seconds since last successful response, before inverter is marked inactive
 #define INACT_THRES_SEC         300
