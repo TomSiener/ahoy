@@ -91,7 +91,7 @@ class Response:
 
 class StatusResponse(Response):
     """Inverter StatusResponse object"""
-    e_keys  = ['voltage','current','power','energy_total','energy_daily','powerfactor']
+    e_keys  = ['voltage','current','power','energy_total','energy_daily','powerfactor', 'reactive_power']
     temperature = None
     frequency = None
     powerfactor = None
@@ -438,9 +438,13 @@ class Hm300Decode0B(StatusResponse):
         """ Grid frequency in Hertz """
         return self.unpack('>H', 16)[0]/100
     @property
+    def ac_reactive_power_0(self):
+        """ reactive power """
+        return self.unpack('>H', 20)[0]/10
+    @property
     def temperature(self):
         """ Inverter temperature in °C """
-        return self.unpack('>H', 26)[0]/10
+        return self.unpack('>h', 26)[0]/10
 
 class Hm300Decode0C(Hm300Decode0B):
     """ 1121-series mirco-inverters status data """
@@ -511,7 +515,7 @@ class Hm600Decode0B(StatusResponse):
     @property
     def ac_current_0(self):
         """ Phase 1 ampere """
-        return self.unpack('>H', 34)[0]/10
+        return self.unpack('>H', 34)[0]/100
     @property
     def ac_power_0(self):
         """ Phase 1 watts """
@@ -521,13 +525,17 @@ class Hm600Decode0B(StatusResponse):
         """ Grid frequency in Hertz """
         return self.unpack('>H', 28)[0]/100
     @property
+    def ac_reactive_power_0(self):
+        """ reactive power """
+        return self.unpack('>H', 32)[0]/10
+    @property
     def powerfactor(self):
         """ Powerfactor """
         return self.unpack('>H', 36)[0]/1000
     @property
     def temperature(self):
         """ Inverter temperature in °C """
-        return self.unpack('>H', 38)[0]/10
+        return self.unpack('>h', 38)[0]/10
     @property
     def event_count(self):
         """ Event counter """
@@ -654,13 +662,17 @@ class Hm1200Decode0B(StatusResponse):
         """ Grid frequency in Hertz """
         return self.unpack('>H', 48)[0]/100
     @property
+    def ac_reactive_power_0(self):
+        """ reactive power """
+        return self.unpack('>H', 52)[0]/10
+    @property
     def powerfactor(self):
         """ Powerfactor """
         return self.unpack('>H', 56)[0]/1000
     @property
     def temperature(self):
         """ Inverter temperature in °C """
-        return self.unpack('>H', 58)[0]/10
+        return self.unpack('>h', 58)[0]/10
     @property
     def event_count(self):
         """ Event counter """

@@ -51,6 +51,9 @@ class SunsetHandler:
             self.suntimes = SunTimes(longitude=longitude, latitude=latitude, altitude=altitude)
             self.nextSunset = self.suntimes.setutc(datetime.utcnow())
             logging.info (f'Todays sunset is at {self.nextSunset} UTC')
+        else:
+            logging.info('Sunset disabled.')
+
 
     def checkWaitForSunrise(self):
         if not self.suntimes:
@@ -58,15 +61,17 @@ class SunsetHandler:
         # if the sunset already happened for today
         now = datetime.utcnow()
         if self.nextSunset < now:
-            # wait until the sun rises tomorrow
-            tomorrow = now + timedelta(days=1)
-            nextSunrise = self.suntimes.riseutc(tomorrow)
-            self.nextSunset = self.suntimes.setutc(tomorrow)
-            time_to_sleep = int((nextSunrise - datetime.now()).total_seconds())
-            logging.info (f'Waiting for sunrise at {nextSunrise} UTC ({time_to_sleep} seconds)')
+            # wait until the sun rises again. if it's already after midnight, this will be today
+            nextSunrise = self.suntimes.riseutc(now)
+            if nextSunrise < now:
+                tomorrow = now + timedelta(days=1)
+                nextSunrise = self.suntimes.riseutc(tomorrow)
+            self.nextSunset = self.suntimes.setutc(nextSunrise)
+            time_to_sleep = int((nextSunrise - datetime.utcnow()).total_seconds())
+            logging.info (f'Next sunrise is at {nextSunrise} UTC, next sunset is at {self.nextSunset} UTC, sleeping for {time_to_sleep} seconds.')
             if time_to_sleep > 0:
                 time.sleep(time_to_sleep)
-                logging.info (f'Woke up... next sunset is at {self.nextSunset} UTC')
+                logging.info (f'Woke up...')
 
 def main_loop(ahoy_config):
     """Main loop"""
@@ -204,21 +209,27 @@ def mqtt_send_status(broker, inverter_ser, data, topic=None):
     if not topic:
         topic = f'hoymiles/{inverter_ser}'
 
+    # Global Head
+    if data['time'] is not None:
+        broker.publish(f'{topic}/time', data['time'].strftime("%d.%m.%y - %H:%M:%S"))
+    
     # AC Data
     phase_id = 0
     for phase in data['phases']:
         broker.publish(f'{topic}/emeter/{phase_id}/power', phase['power'])
         broker.publish(f'{topic}/emeter/{phase_id}/voltage', phase['voltage'])
         broker.publish(f'{topic}/emeter/{phase_id}/current', phase['current'])
+        broker.publish(f'{topic}/emeter/{phase_id}/Q_AC', phase['reactive_power'])
         phase_id = phase_id + 1
 
     # DC Data
     string_id = 0
     for string in data['strings']:
-        broker.publish(f'{topic}/emeter-dc/{string_id}/total', string['energy_total']/1000)
-        broker.publish(f'{topic}/emeter-dc/{string_id}/power', string['power'])
         broker.publish(f'{topic}/emeter-dc/{string_id}/voltage', string['voltage'])
         broker.publish(f'{topic}/emeter-dc/{string_id}/current', string['current'])
+        broker.publish(f'{topic}/emeter-dc/{string_id}/power', string['power'])
+        broker.publish(f'{topic}/emeter-dc/{string_id}/YieldDay', string['energy_daily'])
+        broker.publish(f'{topic}/emeter-dc/{string_id}/YieldTotal', string['energy_total']/1000)
         string_id = string_id + 1
     # Global
     if data['powerfactor'] is not None:
