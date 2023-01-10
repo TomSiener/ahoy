@@ -56,46 +56,7 @@ def readVersion(path, infile):
     src = path + ".pio/build/esp8266-release/firmware.bin"
     dst = path + "firmware/" + versionout
     os.rename(src, dst)
-
-    versionout = version[:-1] + "_esp8266_nokia5110_" + sha + ".bin"
-    src = path + ".pio/build/esp8266-nokia5110/firmware.bin"
-    dst = path + "firmware/" + versionout
-    os.rename(src, dst)
-
-    versionout = version[:-1] + "_esp8266_ssd1306_" + sha + ".bin"
-    src = path + ".pio/build/esp8266-ssd1306/firmware.bin"
-    dst = path + "firmware/" + versionout
-    os.rename(src, dst)
-    
-    versionout = version[:-1] + "_esp8285_" + sha + ".bin"
-    src = path + ".pio/build/esp8285-release/firmware.bin"
-    dst = path + "firmware/" + versionout
-    os.rename(src, dst)
-    gzip_bin(dst, dst + ".gz")
-
-    versionout = version[:-1] + "_esp32_" + sha + ".bin"
-    src = path + ".pio/build/esp32-wroom32-release/firmware.bin"
-    dst = path + "firmware/" + versionout
-    os.rename(src, dst)
-
-    versionout = version[:-1] + "_esp32_nokia5110_" + sha + ".bin"
-    src = path + ".pio/build/esp32-wroom32-nokia5110/firmware.bin"
-    dst = path + "firmware/" + versionout
-    os.rename(src, dst)
-
-    versionout = version[:-1] + "_esp32_ssd1306_" + sha + ".bin"
-    src = path + ".pio/build/esp32-wroom32-ssd1306/firmware.bin"
-    dst = path + "firmware/" + versionout
-    os.rename(src, dst)
-
-    # other ESP32 bin files
-    src = path + ".pio/build/esp32-wroom32-release/"
-    dst = path + "firmware/"
-    os.rename(src + "bootloader.bin", dst + "bootloader.bin")
-    os.rename(src + "partitions.bin", dst + "partitions.bin")
-    genOtaBin(path + "firmware/")
-    os.rename("../scripts/gh-action-dev-build-flash.html", path + "install.html")
-
+       
     print("name=" + versionnumber[:-1] )
     
     
